@@ -1,20 +1,23 @@
+import dynamic from 'next/dynamic'
 import { fetchSiteContent } from '@/lib/content'
 import SiteHeader from '@/components/landing/SiteHeader'
 import Hero from '@/components/landing/Hero'
 import UrgencyForm from '@/components/landing/UrgencyForm'
-import GiftBox from '@/components/landing/GiftBox'
-import PainPoints from '@/components/landing/PainPoints'
-import Benefits from '@/components/landing/Benefits'
-import Subjects from '@/components/landing/Subjects'
-import SchedulePricing from '@/components/landing/SchedulePricing'
-import Gallery from '@/components/landing/Gallery'
-import Faq from '@/components/landing/Faq'
-import Organization from '@/components/landing/Organization'
-import FinalCta from '@/components/landing/FinalCta'
-import SiteFooter from '@/components/landing/SiteFooter'
-import FloatingElements from '@/components/landing/FloatingElements'
 
-export const revalidate = 60 // revalidate content every 60 seconds
+// Lazy load below-the-fold sections — reduces initial JS bundle
+const GiftBox = dynamic(() => import('@/components/landing/GiftBox'))
+const PainPoints = dynamic(() => import('@/components/landing/PainPoints'))
+const Benefits = dynamic(() => import('@/components/landing/Benefits'))
+const Subjects = dynamic(() => import('@/components/landing/Subjects'))
+const SchedulePricing = dynamic(() => import('@/components/landing/SchedulePricing'))
+const Gallery = dynamic(() => import('@/components/landing/Gallery'))
+const Faq = dynamic(() => import('@/components/landing/Faq'))
+const Organization = dynamic(() => import('@/components/landing/Organization'))
+const FinalCta = dynamic(() => import('@/components/landing/FinalCta'))
+const SiteFooter = dynamic(() => import('@/components/landing/SiteFooter'))
+const FloatingElements = dynamic(() => import('@/components/landing/FloatingElements'))
+
+export const revalidate = 60 // ISR: revalidate content every 60 seconds
 
 export default async function LandingPage() {
   const content = await fetchSiteContent()
