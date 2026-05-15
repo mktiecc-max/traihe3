@@ -3,6 +3,15 @@
 -- Run this in Supabase SQL Editor (Dashboard > SQL Editor)
 -- ============================================================
 
+-- Đảm bảo function update_updated_at tồn tại
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Table to store editable landing page content per section
 CREATE TABLE IF NOT EXISTS site_content (
   section     TEXT PRIMARY KEY,
@@ -19,7 +28,8 @@ CREATE TRIGGER site_content_updated_at
 -- Enable RLS
 ALTER TABLE site_content ENABLE ROW LEVEL SECURITY;
 
--- Public can read (landing page needs this)
+-- Xóa policy cũ nếu tồn tại rồi tạo mới
+DROP POLICY IF EXISTS "site_content_public_read" ON site_content;
 CREATE POLICY "site_content_public_read" ON site_content
   FOR SELECT TO anon USING (true);
 

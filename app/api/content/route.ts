@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
 import { defaultContent, type SiteContent } from '@/lib/content'
 
-// GET: fetch all site content
+// GET: fetch all site content (dùng cho cả admin lẫn landing preview)
 export async function GET() {
   try {
     const db = createAdminClient()
@@ -11,6 +11,7 @@ export async function GET() {
       .select('section, content')
 
     if (error) {
+      console.error('[content GET] Supabase error:', error)
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
     }
 
@@ -27,6 +28,7 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, content })
   } catch (err) {
+    console.error('[content GET] Unexpected error:', err)
     return NextResponse.json({ ok: false, error: 'Server error' }, { status: 500 })
   }
 }
@@ -34,7 +36,13 @@ export async function GET() {
 // PUT: update a section
 export async function PUT(req: NextRequest) {
   try {
-    const body = await req.json()
+    let body: any
+    try {
+      body = await req.json()
+    } catch {
+      return NextResponse.json({ ok: false, error: 'Invalid JSON body' }, { status: 400 })
+    }
+
     const { section, content } = body as { section: string; content: Record<string, unknown> }
 
     if (!section || !content) {
@@ -53,6 +61,8 @@ export async function PUT(req: NextRequest) {
     }
 
     const db = createAdminClient()
+
+    // Upsert: insert hoặc update nếu đã tồn tại
     const { error } = await db
       .from('site_content')
       .upsert(
@@ -61,12 +71,13 @@ export async function PUT(req: NextRequest) {
       )
 
     if (error) {
-      console.error('[content] Supabase upsert error:', error)
+      console.error('[content PUT] Supabase upsert error:', error.message, error.details, error.hint)
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
     }
 
     return NextResponse.json({ ok: true })
   } catch (err) {
+    console.error('[content PUT] Unexpected error:', err)
     return NextResponse.json({ ok: false, error: 'Server error' }, { status: 500 })
   }
 }
