@@ -131,10 +131,24 @@ export default function ContentEditor() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ section, content: content[section] }),
       })
+      if (!res.ok) {
+        // Thử đọc body lỗi
+        let errMsg = `HTTP ${res.status}`
+        try {
+          const errJson = await res.json()
+          errMsg = errJson.error || errMsg
+        } catch {
+          const errText = await res.text().catch(() => '')
+          errMsg = errText.slice(0, 100) || errMsg
+        }
+        showToast(`⚠️ Lỗi: ${errMsg}`)
+        setSaving(false)
+        return
+      }
       const json = await res.json()
-      showToast(json.ok ? `✓ Đã lưu "${sectionLabels[section]}"` : '⚠️ Lỗi lưu dữ liệu')
-    } catch {
-      showToast('⚠️ Lỗi kết nối server')
+      showToast(json.ok ? `✓ Đã lưu "${sectionLabels[section]}"` : `⚠️ ${json.error || 'Lỗi lưu dữ liệu'}`)
+    } catch (err: any) {
+      showToast(`⚠️ Lỗi kết nối: ${err?.message || 'unknown'}`)
     }
     setSaving(false)
   }
