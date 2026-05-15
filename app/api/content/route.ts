@@ -33,8 +33,8 @@ export async function GET() {
   }
 }
 
-// PUT: update a section
-export async function PUT(req: NextRequest) {
+// POST: update a section
+export async function POST(req: NextRequest) {
   try {
     let body: any
     try {
