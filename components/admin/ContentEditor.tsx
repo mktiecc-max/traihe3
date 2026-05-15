@@ -347,7 +347,108 @@ export default function ContentEditor() {
             {renderObjArray(s, 'timeline', ['time', 'title', 'desc'], ['Giờ', 'Hoạt động', 'Chi tiết'], 'Thêm mốc')}
             <CmsTextField label="Tiêu đề bảng giá" value={getField(s, 'pricingTitle')} onChange={(v) => updateField(s, 'pricingTitle', v)} />
             <h4 style={{ margin: '16px 0 8px' }}>Gói giá</h4>
-            {renderObjArray(s, 'priceCards', ['tag', 'period', 'priceOld', 'priceNew', 'ctaText'], ['Tag', 'Thời gian', 'Giá cũ', 'Giá mới', 'CTA'], 'Thêm gói')}
+            <div className="cms-array">
+              {(getField(s, 'priceCards') as any[]).map((card: any, ci: number) => (
+                <div key={ci} className="cms-array__item" style={{ border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, background: card.featured ? '#fffbeb' : '#fff' }}>
+                  <div className="cms-array__row">
+                    <div className="afield" style={{ flex: 1 }}>
+                      <label>Tag #{ci + 1}</label>
+                      <input type="text" value={card.tag ?? ''} onChange={(e) => updateArrayItem(s, 'priceCards', ci, 'tag', e.target.value)} />
+                    </div>
+                    <div className="afield" style={{ flex: 1 }}>
+                      <label>Thời gian</label>
+                      <input type="text" value={card.period ?? ''} onChange={(e) => updateArrayItem(s, 'priceCards', ci, 'period', e.target.value)} />
+                    </div>
+                    <div className="afield" style={{ flex: 1 }}>
+                      <label>Giá cũ</label>
+                      <input type="text" value={card.priceOld ?? ''} onChange={(e) => updateArrayItem(s, 'priceCards', ci, 'priceOld', e.target.value)} />
+                    </div>
+                    <div className="afield" style={{ flex: 1 }}>
+                      <label>Giá mới</label>
+                      <input type="text" value={card.priceNew ?? ''} onChange={(e) => updateArrayItem(s, 'priceCards', ci, 'priceNew', e.target.value)} />
+                    </div>
+                    <div className="afield" style={{ flex: 1 }}>
+                      <label>CTA</label>
+                      <input type="text" value={card.ctaText ?? ''} onChange={(e) => updateArrayItem(s, 'priceCards', ci, 'ctaText', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="cms-array__row" style={{ marginTop: 8 }}>
+                    <div className="afield" style={{ flex: 1 }}>
+                      <label>Ribbon (nếu có)</label>
+                      <input type="text" value={card.ribbon ?? ''} onChange={(e) => updateArrayItem(s, 'priceCards', ci, 'ribbon', e.target.value)} />
+                    </div>
+                    <div className="afield" style={{ flex: 0, minWidth: 140, display: 'flex', alignItems: 'center', gap: 6, paddingTop: 22 }}>
+                      <input
+                        type="checkbox"
+                        checked={!!card.featured}
+                        onChange={(e) => {
+                          setContent((prev) => {
+                            const arr = [...(prev.schedule as any).priceCards]
+                            arr[ci] = { ...arr[ci], featured: e.target.checked }
+                            return { ...prev, schedule: { ...prev.schedule, priceCards: arr } }
+                          })
+                        }}
+                      />
+                      <label style={{ margin: 0, cursor: 'pointer' }}>Nổi bật</label>
+                    </div>
+                  </div>
+                  {/* Features - danh sách ✓ dưới giá */}
+                  <div style={{ marginTop: 10 }}>
+                    <label style={{ fontWeight: 600, fontSize: 13, display: 'block', marginBottom: 6 }}>📋 Danh sách quyền lợi (hiển thị dưới giá)</label>
+                    {(card.features || []).map((feat: string, fi: number) => (
+                      <div key={fi} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                        <input
+                          type="text"
+                          value={feat}
+                          style={{ flex: 1 }}
+                          onChange={(e) => {
+                            setContent((prev) => {
+                              const cards = [...(prev.schedule as any).priceCards]
+                              const feats = [...(cards[ci].features || [])]
+                              feats[fi] = e.target.value
+                              cards[ci] = { ...cards[ci], features: feats }
+                              return { ...prev, schedule: { ...prev.schedule, priceCards: cards } }
+                            })
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="abtn abtn--danger abtn--sm"
+                          onClick={() => {
+                            setContent((prev) => {
+                              const cards = [...(prev.schedule as any).priceCards]
+                              const feats = [...(cards[ci].features || [])]
+                              feats.splice(fi, 1)
+                              cards[ci] = { ...cards[ci], features: feats }
+                              return { ...prev, schedule: { ...prev.schedule, priceCards: cards } }
+                            })
+                          }}
+                        >✕</button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="abtn abtn--outline abtn--sm"
+                      style={{ marginTop: 4 }}
+                      onClick={() => {
+                        setContent((prev) => {
+                          const cards = [...(prev.schedule as any).priceCards]
+                          const feats = [...(cards[ci].features || []), '✓ ']
+                          cards[ci] = { ...cards[ci], features: feats }
+                          return { ...prev, schedule: { ...prev.schedule, priceCards: cards } }
+                        })
+                      }}
+                    >+ Thêm quyền lợi</button>
+                  </div>
+                  <button type="button" className="abtn abtn--danger abtn--sm" style={{ marginTop: 10 }} onClick={() => removeArrayItem(s, 'priceCards', ci)}>✕ Xóa gói này</button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="abtn abtn--outline abtn--sm"
+                onClick={() => addArrayItem(s, 'priceCards', { tag: '', period: '', priceOld: '', priceNew: '', features: ['✓ '], ctaText: '' } as any)}
+              >+ Thêm gói</button>
+            </div>
             <h4 style={{ margin: '16px 0 8px' }}>Chính sách</h4>
             {renderObjArray(s, 'policies', ['icon', 'text'], ['Icon', 'Nội dung'], 'Thêm')}
           </>
