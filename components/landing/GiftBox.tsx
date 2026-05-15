@@ -1,34 +1,22 @@
-export default function GiftBox() {
-  const gifts = [
-    '🎒 Ba lô UCMAS',
-    '👕 Áo đồng phục',
-    '🧢 Nón trại hè',
-    '💧 Bình nước thể thao',
-    '📔 Sổ tay nhật ký',
-    '✏️ Bộ dụng cụ học tập',
-    '🎖️ Huy hiệu UCMAS',
-    '🎁 Voucher học thử miễn phí',
-  ]
+import type { GiftContent } from '@/lib/content'
 
+export default function GiftBox({ content }: { content: GiftContent }) {
   return (
     <section className="gift">
       <div className="container gift__inner">
         <div className="gift__copy">
-          <span className="badge-green">BỘ 8 QUÀ TẶNG ĐẶC BIỆT</span>
+          <span className="badge-green">{content.badge}</span>
           <h2>
-            Quà gửi tận nhà <em>ngay khi bố mẹ đăng ký</em>
+            {content.title}
           </h2>
-          <p>
-            Bộ phụ kiện trại hè UCMAS giúp con sẵn sàng cho mùa hè trải nghiệm — từ ba lô, áo đồng
-            phục, bình nước đến sổ tay học tập.
-          </p>
+          <p>{content.description}</p>
           <ul className="gift__list">
-            {gifts.map((g) => (
+            {content.gifts.map((g) => (
               <li key={g}>{g}</li>
             ))}
           </ul>
           <a href="#form" className="btn btn--green btn--lg" style={{ color: '#fff' }}>
-            Nhận quà cho con ngay
+            {content.ctaText}
           </a>
         </div>
         <div className="gift__media">

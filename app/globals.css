@@ -1050,3 +1050,20 @@ tbody tr:hover { background: #f9fafc }
 .page-btn:hover { background: #f4f6fb }
 .page-btn.is-active { background: var(--navy); color: #fff; border-color: var(--navy) }
 .page-btn:disabled { opacity: 0.4; cursor: not-allowed }
+
+/* ===== ADMIN: CMS EDITOR ===== */
+.cms-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; min-height: 500px }
+@media (max-width: 900px) { .cms-layout { grid-template-columns: 1fr } }
+.cms-nav { display: flex; flex-direction: column; gap: 3px; background: #fff; border: 1px solid var(--admin-line); border-radius: var(--admin-r-md); padding: 10px 8px; align-self: start; position: sticky; top: 80px }
+.cms-nav__item { display: block; width: 100%; text-align: left; padding: 8px 12px; border: 0; background: transparent; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--admin-ink-2); cursor: pointer; transition: background 0.15s, color 0.15s }
+.cms-nav__item:hover { background: #f4f6fb; color: var(--admin-ink) }
+.cms-nav__item.is-active { background: var(--navy); color: #fff; font-weight: 600 }
+.cms-editor { min-width: 0 }
+.cms-array { margin: 8px 0 16px }
+.cms-array__item { background: #f8fafc; border: 1px solid var(--admin-line-2); border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px }
+.cms-array__item .afield { margin-bottom: 6px }
+.cms-array__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px }
+.abtn--outline { background: transparent; border: 1px solid var(--admin-line); color: var(--admin-ink-2) }
+.abtn--outline:hover { background: #f4f6fb; border-color: #cbd5e1 }
+.abtn--danger.abtn--sm { padding: 4px 8px; font-size: 11px }
+

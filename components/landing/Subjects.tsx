@@ -1,43 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import type { SubjectContent } from '@/lib/content'
 
-const physical = [
-  { icon: '💃', title: 'Nhảy hiện đại', desc: 'Tự tin biểu diễn, nâng cao sức bền.' },
-  { icon: '🏊', title: 'Kỹ năng bơi', desc: 'An toàn dưới nước, phát triển cơ.' },
-  { icon: '🤸', title: 'Thể dục tăng chiều cao', desc: 'Bài tập khoa học, hiệu quả.' },
-  { icon: '👨‍🍳', title: 'Đầu bếp nhí', desc: 'Tự lập, sáng tạo trong bếp.' },
-  { icon: '🪁', title: 'Trò chơi dân gian', desc: 'Khám phá văn hóa Việt.' },
-  { icon: '🏕️', title: 'Kỹ năng sinh tồn', desc: 'Tự bảo vệ, ứng phó tình huống.' },
-  { icon: '🌳', title: 'Dã ngoại', desc: 'Khám phá thiên nhiên, kết bạn.' },
-]
-
-const mental = [
-  { icon: '🎩', title: 'Trình diễn ảo thuật', desc: 'Tự tin biểu diễn trước đám đông.' },
-  { icon: '🗣️', title: 'Tiếng Anh giao tiếp', desc: 'Phản xạ ngôn ngữ tự nhiên.' },
-  { icon: '🧩', title: 'Thử thách siêu trí tuệ', desc: 'Tư duy logic, phản xạ nhanh.' },
-  { icon: '🎨', title: 'Xưởng nghệ thuật xanh', desc: 'Sáng tạo từ vật liệu tái chế.' },
-  { icon: '🤝', title: 'Văn hóa ứng xử', desc: 'Lễ phép, biết cách giao tiếp.' },
-  { icon: '🔬', title: 'Khoa học kỳ thú', desc: 'Thí nghiệm trực quan, dễ hiểu.' },
-  { icon: '🤖', title: 'Roborobo', desc: 'Lắp ráp robot, lập trình cơ bản.' },
-]
-
-export default function Subjects() {
+export default function Subjects({ content }: { content: SubjectContent }) {
   const [tab, setTab] = useState<'physical' | 'mental'>('physical')
-  const subjects = tab === 'physical' ? physical : mental
+  const subjects = tab === 'physical' ? content.physical : content.mental
 
   return (
     <section className="subjects" id="mon-hoc">
       <div className="container">
         <header className="section-head section-head--center">
-          <span className="section-eyebrow">14 môn học</span>
-          <h2>
-            Giúp con phát triển <span className="tx-red">toàn diện</span> trong mùa hè
-          </h2>
-          <p>
-            Chương trình cân bằng giữa <strong>Thể chất</strong> và <strong>Tư duy</strong> — không
-            học thêm, không áp lực.
-          </p>
+          <span className="section-eyebrow">{content.eyebrow}</span>
+          <h2>{content.title}</h2>
+          <p>{content.description}</p>
         </header>
 
         <div className="subj-tabs">

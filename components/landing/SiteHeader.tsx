@@ -1,10 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
-function pad(n: number) {
-  return String(n).padStart(2, '0')
-}
+import type { ContactContent } from '@/lib/content'
 
 function calcSeats() {
   const start = new Date('2026-02-01T00:00:00+07:00').getTime()
@@ -15,7 +12,7 @@ function calcSeats() {
   return Math.max(11, Math.min(50, seats + nudge))
 }
 
-export default function SiteHeader() {
+export default function SiteHeader({ content }: { content: ContactContent }) {
   const [navOpen, setNavOpen] = useState(false)
   const [seats, setSeats] = useState(37)
 
@@ -44,11 +41,11 @@ export default function SiteHeader() {
         </nav>
 
         <div className="header__actions">
-          <a href="tel:0967868623" className="btn-phone" aria-label="Gọi hotline">
+          <a href={`tel:${content.phone}`} className="btn-phone" aria-label="Gọi hotline">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1 1 0 0 0-1.02.24l-2.2 2.2a15.07 15.07 0 0 1-6.59-6.59l2.2-2.21a1 1 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1c0 9.39 7.61 17 17 17a1 1 0 0 0 1-1v-3.5a1 1 0 0 0-1-1Z" />
             </svg>
-            0967.868.623
+            {content.phoneFormatted}
           </a>
           <a href="#form" className="btn-cta-small">Đăng ký ngay</a>
         </div>
@@ -66,7 +63,7 @@ export default function SiteHeader() {
       <div className="header__promo">
         <span className="promo-dot" />
         <span>
-          <strong>ƯU ĐÃI ĐĂNG KÝ SỚM TỚI 25%</strong> · Bộ 8 quà tặng gửi tận nhà · Còn{' '}
+          <strong>{content.promoText}</strong> · Còn{' '}
           <span id="seatCount">{seats}</span>/50 suất
         </span>
       </div>

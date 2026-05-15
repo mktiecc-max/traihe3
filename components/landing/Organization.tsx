@@ -1,20 +1,19 @@
-export default function Organization() {
+import type { OrgContent } from '@/lib/content'
+
+export default function Organization({ content }: { content: OrgContent }) {
   return (
     <section className="org">
       <div className="container org__inner">
         <div className="org__card">
           <div className="org__logo"><span>U</span></div>
-          <h3>UCMAS Việt Nam</h3>
-          <p className="org__slogan">UY TÍN · CHUYÊN NGHIỆP · CHẤT LƯỢNG</p>
+          <h3>{content.name}</h3>
+          <p className="org__slogan">{content.slogan}</p>
           <div className="org__stats">
-            <div><strong>18+</strong><span>Năm kinh nghiệm</span></div>
-            <div><strong>06</strong><span>Mùa trại hè</span></div>
-            <div><strong>1.000+</strong><span>Học sinh/kỳ</span></div>
+            {content.stats.map((s) => (
+              <div key={s.label}><strong>{s.value}</strong><span>{s.label}</span></div>
+            ))}
           </div>
-          <p className="org__desc">
-            18 năm hành trình vì những bộ não Việt khỏe mạnh. UCMAS Việt Nam — đơn vị tiên phong
-            phát triển phương pháp UCMAS toàn diện cho trẻ em Việt Nam.
-          </p>
+          <p className="org__desc">{content.description}</p>
         </div>
       </div>
     </section>

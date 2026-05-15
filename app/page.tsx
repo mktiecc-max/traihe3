@@ -1,3 +1,4 @@
+import { fetchSiteContent } from '@/lib/content'
 import SiteHeader from '@/components/landing/SiteHeader'
 import Hero from '@/components/landing/Hero'
 import UrgencyForm from '@/components/landing/UrgencyForm'
@@ -13,25 +14,29 @@ import FinalCta from '@/components/landing/FinalCta'
 import SiteFooter from '@/components/landing/SiteFooter'
 import FloatingElements from '@/components/landing/FloatingElements'
 
-export default function LandingPage() {
+export const revalidate = 60 // revalidate content every 60 seconds
+
+export default async function LandingPage() {
+  const content = await fetchSiteContent()
+
   return (
     <>
-      <SiteHeader />
+      <SiteHeader content={content.contact} />
       <main>
-        <Hero />
-        <UrgencyForm />
-        <GiftBox />
-        <PainPoints />
-        <Benefits />
-        <Subjects />
-        <SchedulePricing />
-        <Gallery />
-        <Faq />
-        <Organization />
-        <FinalCta />
+        <Hero content={content.hero} />
+        <UrgencyForm content={content.urgency} />
+        <GiftBox content={content.gift} />
+        <PainPoints content={content.painPoints} />
+        <Benefits content={content.benefits} />
+        <Subjects content={content.subjects} />
+        <SchedulePricing content={content.schedule} />
+        <Gallery content={content.gallery} />
+        <Faq content={content.faq} />
+        <Organization content={content.organization} />
+        <FinalCta content={content.finalCta} />
       </main>
-      <SiteFooter />
-      <FloatingElements />
+      <SiteFooter content={content.footer} />
+      <FloatingElements content={content.contact} />
     </>
   )
 }

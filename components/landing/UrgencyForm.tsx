@@ -1,18 +1,18 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-
-const DEADLINE = new Date('2026-03-15T23:59:59+07:00').getTime()
+import type { UrgencyContent } from '@/lib/content'
 
 function pad(n: number) {
   return String(n).padStart(2, '0')
 }
 
-function useCountdown() {
+function useCountdown(deadline: string) {
   const [time, setTime] = useState({ d: '00', h: '00', m: '00', s: '00' })
   useEffect(() => {
+    const deadlineMs = new Date(deadline).getTime()
     function tick() {
-      let diff = Math.max(0, DEADLINE - Date.now())
+      let diff = Math.max(0, deadlineMs - Date.now())
       const d = Math.floor(diff / (1000 * 60 * 60 * 24))
       diff -= d * 1000 * 60 * 60 * 24
       const h = Math.floor(diff / (1000 * 60 * 60))
@@ -25,7 +25,7 @@ function useCountdown() {
     tick()
     const t = setInterval(tick, 1000)
     return () => clearInterval(t)
-  }, [])
+  }, [deadline])
   return time
 }
 
@@ -33,8 +33,8 @@ function validatePhone(v: string) {
   return /^(0|\+84)[0-9]{9,10}$/.test(v.replace(/\s+/g, ''))
 }
 
-export default function UrgencyForm() {
-  const { d, h, m, s } = useCountdown()
+export default function UrgencyForm({ content }: { content: UrgencyContent }) {
+  const { d, h, m, s } = useCountdown(content.deadline)
 
   const [phoneErr, setPhoneErr] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -97,15 +97,9 @@ export default function UrgencyForm() {
     <section className="urgency" id="form">
       <div className="container urgency__inner">
         <div className="urgency__copy">
-          <div className="ribbon">🔥 50 suất đăng ký sớm</div>
-          <h2 className="urgency__title">
-            Đăng ký trước <span className="tx-red">15/03/2026</span> để nhận{' '}
-            <span className="hl-yellow">ưu đãi 25%</span>
-          </h2>
-          <p className="urgency__desc">
-            Hoàn tất 30 giây — Cô Yến của UCMAS sẽ gọi tư vấn trong vòng <strong>15 phút</strong>.
-            Bố mẹ nhận ngay <strong>bảng học phí chi tiết + lịch trình 14 môn học</strong>.
-          </p>
+          <div className="ribbon">{content.ribbon}</div>
+          <h2 className="urgency__title">{content.title}</h2>
+          <p className="urgency__desc">{content.description}</p>
 
           <div className="countdown" aria-live="polite">
             <div className="count-cell"><span>{d}</span><small>Ngày</small></div>
@@ -118,11 +112,7 @@ export default function UrgencyForm() {
           </div>
 
           <ul className="urgency__list">
-            {[
-              'Bộ 8 quà tặng giao tận nhà',
-              'Giảm thêm khi đăng ký nhóm 2-3 bạn',
-              'Cam kết bảo mật thông tin',
-            ].map((item) => (
+            {content.checkmarks.map((item) => (
               <li key={item}>
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
@@ -136,8 +126,8 @@ export default function UrgencyForm() {
         {/* FORM CARD */}
         <form className="lead-form" id="leadForm" ref={formRef} onSubmit={handleSubmit} noValidate>
           <div className="lead-form__head">
-            <span className="badge-green">CON NHẬN QUÀ NGAY KHI BỐ MẸ ĐĂNG KÝ</span>
-            <h3>Nhận ưu đãi 25% + Bộ 8 quà tặng</h3>
+            <span className="badge-green">{content.formBadge}</span>
+            <h3>{content.formTitle}</h3>
           </div>
 
           <div className="field">
@@ -177,9 +167,9 @@ export default function UrgencyForm() {
               <label htmlFor="session">Đăng ký kỳ <span>*</span></label>
               <select id="session" name="session" required defaultValue="">
                 <option value="" disabled>— Chọn kỳ —</option>
-                <option value="Kỳ 1 - Tháng 6">Kỳ 1 · Tháng 6</option>
-                <option value="Kỳ 2 - Tháng 7">Kỳ 2 · Tháng 7</option>
-                <option value="Cả 2 kỳ">Cả 2 kỳ (ưu đãi thêm)</option>
+                {content.sessions.map((sess) => (
+                  <option key={sess.value} value={sess.value}>{sess.label}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -204,7 +194,7 @@ export default function UrgencyForm() {
             className={`btn btn--primary btn--block btn--xl${status !== 'loading' ? ' btn--pulse' : ''}`}
             disabled={status === 'loading'}
           >
-            <span className="btn__label">Đăng ký nhận ưu đãi</span>
+            <span className="btn__label">{content.submitText}</span>
             {status === 'loading' && <span className="btn__spinner" aria-hidden="true" style={{ display: 'inline-block' }} />}
           </button>
 
@@ -216,7 +206,7 @@ export default function UrgencyForm() {
 
           {status === 'success' && (
             <p className="form-msg form-msg--success">
-              🎉 <strong>Đăng ký thành công!</strong> Cô Yến của UCMAS sẽ liên hệ với bố mẹ trong ít phút.
+              {content.successMsg}
             </p>
           )}
           {status === 'error' && (
