@@ -34,6 +34,7 @@ export async function POST() {
   for (const lead of leads) {
     try {
       const ok = await appendToSheet({
+        leadId: lead.id,
         childName: lead.child_name,
         phone: lead.phone,
         birthYear: lead.birth_year,

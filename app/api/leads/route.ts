@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Fire-and-forget: Google Sheets + Telegram (do NOT await — keep response fast)
-  appendToSheet({ ...data, source: 'Landing - Trại hè 2026', userAgent })
+  appendToSheet({ ...data, leadId: lead?.id, source: 'Landing - Trại hè 2026', userAgent })
   if (lead) notifyTelegram(lead)
 
   return NextResponse.json({ ok: true, leadId: lead?.id })

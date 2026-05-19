@@ -21,6 +21,7 @@ function formatVNDateTime(dateInput?: string | Date): string {
 }
 
 export type SheetLeadPayload = {
+  leadId?: string        // Supabase UUID — used for upsert in Apps Script
   childName: string
   phone: string
   birthYear: number
@@ -61,7 +62,8 @@ async function resolveWebAppUrl(): Promise<string | null> {
 }
 
 /**
- * Fire-and-forget: append a lead row to Google Sheet via Apps Script Web App.
+ * Upsert a lead row to Google Sheet via Apps Script Web App.
+ * Apps Script will UPDATE the row if leadId already exists, or INSERT a new row.
  * Does NOT block the API response. Failure is logged but silently ignored.
  */
 export async function appendToSheet(lead: SheetLeadPayload) {
@@ -73,6 +75,7 @@ export async function appendToSheet(lead: SheetLeadPayload) {
 
   try {
     const fd = new URLSearchParams({
+      leadId: lead.leadId ?? '',
       childName: lead.childName,
       phone: lead.phone,
       birthYear: String(lead.birthYear),
