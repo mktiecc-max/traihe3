@@ -1,5 +1,25 @@
 import { createAdminClient } from './supabase-admin'
 
+/**
+ * Format a date string or Date to dd/mm/yyyy hh:mm:ss in Vietnam timezone (UTC+7)
+ */
+function formatVNDateTime(dateInput?: string | Date): string {
+  const d = dateInput ? new Date(dateInput) : new Date()
+  const vn = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(d)
+
+  const get = (t: string) => vn.find((p) => p.type === t)?.value ?? '00'
+  return `${get('day')}/${get('month')}/${get('year')} ${get('hour')}:${get('minute')}:${get('second')}`
+}
+
 export type SheetLeadPayload = {
   childName: string
   phone: string
@@ -61,7 +81,7 @@ export async function appendToSheet(lead: SheetLeadPayload) {
       notes: lead.notes ?? '',
       source: lead.source ?? 'Landing - Trại hè 2026',
       userAgent: lead.userAgent ?? '',
-      submittedAt: lead.submittedAt ?? new Date().toISOString(),
+      submittedAt: formatVNDateTime(lead.submittedAt),
     })
 
     const controller = new AbortController()
