@@ -35,13 +35,11 @@ export type SheetLeadPayload = {
 
 /**
  * Resolve the Google Sheets Web App URL.
- * Priority: env var → Supabase settings table
+ * Priority: Supabase DB settings (Admin UI) → env var fallback
  */
 async function resolveWebAppUrl(): Promise<string | null> {
-  const envUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL
-  if (envUrl && !envUrl.includes('REPLACE')) {
-    return envUrl
-  }
+  // Priority: Supabase DB (set via Admin UI) → env var fallback
+  // DB takes priority because the user explicitly configured it through the admin panel
 
   try {
     const db = createAdminClient()
@@ -51,11 +49,17 @@ async function resolveWebAppUrl(): Promise<string | null> {
       .eq('key', 'google_sheets_webapp_url')
       .single()
 
-    if (data?.value && !data.value.includes('REPLACE')) {
+    if (data?.value && !data.value.includes('REPLACE') && data.value.startsWith('https://')) {
       return data.value as string
     }
   } catch {
-    // settings table may not exist — silently ignore
+    // settings table may not exist — fall through to env var
+  }
+
+  // Fallback: env var (for local dev or if DB is not configured)
+  const envUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL
+  if (envUrl && !envUrl.includes('REPLACE') && envUrl.startsWith('https://')) {
+    return envUrl
   }
 
   return null
